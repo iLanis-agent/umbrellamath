@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umbrella math - calculators</title>
+<style>
+  :root { --accent: #d1495b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; background: #fbf6f7; color: #2c2224; line-height: 1.55; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--accent); }
+  .lede { margin: 0 0 28px; max-width: 640px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  section { background: #fff; border: 1px solid #ecdadd; border-radius: 8px; padding: 20px 22px; }
+  h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .hint { font-size: 0.9rem; color: #7c5560; margin: 0 0 14px; }
+  label { display: block; font-size: 0.9rem; margin: 10px 0 3px; }
+  input { width: 100%; padding: 8px 10px; font-size: 1rem; border: 1px solid #dbb7bd; border-radius: 5px; font-family: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 11px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit; }
+  button:hover { filter: brightness(1.1); }
+  .out { margin-top: 14px; font-size: 1rem; min-height: 1.4em; }
+  .out.err { color: #a32222; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; font-size: 0.85rem; color: #94858a; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Umbrella math</h1>
+  <p class="lede">Coverage, dry margin and the yearly umbrella budget. Exact arithmetic, every borrowed number labeled.</p>
+  <div class="grid">
+    <section>
+      <h2>Cover plan</h2>
+      <p class="hint">A canopy becomes people sheltered.</p>
+      <label for="c-canopy">Canopy arc (cm)</label>
+      <input id="c-canopy" type="number" value="100" min="0" step="5">
+      <button id="c-go">Measure the cover</button>
+      <div class="out" id="c-out"></div>
+    </section>
+    <section>
+      <h2>Dry plan</h2>
+      <p class="hint">Sideways rain eats your margin.</p>
+      <label for="d-canopy">Canopy arc (cm)</label>
+      <input id="d-canopy" type="number" value="100" min="0" step="5">
+      <label for="d-body">Your shoulder width (cm)</label>
+      <input id="d-body" type="number" value="45" min="0" step="1">
+      <label for="d-drift">Sideways rain drift (cm)</label>
+      <input id="d-drift" type="number" value="15" min="0" step="1">
+      <button id="d-go">Check the margin</button>
+      <div class="out" id="d-out"></div>
+    </section>
+    <section>
+      <h2>Year plan</h2>
+      <p class="hint">A loss habit becomes a budget.</p>
+      <label for="y-lost">Umbrellas lost or broken a year</label>
+      <input id="y-lost" type="number" value="1.5" min="0" step="0.5">
+      <label for="y-price">Price per umbrella</label>
+      <input id="y-price" type="number" value="12" min="0" step="1">
+      <button id="y-go">Count the year</button>
+      <div class="out" id="y-out"></div>
+    </section>
+  </div>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/umbrellamath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('c-go').addEventListener('click', function(){
+  show('c-out', UmbrellaMath.coverPlan(num('c-canopy')), function(r){ return UmbrellaMath.renderCover(r, num('c-canopy')); });
+});
+document.getElementById('d-go').addEventListener('click', function(){
+  show('d-out', UmbrellaMath.dryPlan(num('d-canopy'),num('d-body'),num('d-drift')), function(r){ return UmbrellaMath.renderDry(r, num('d-drift')); });
+});
+document.getElementById('y-go').addEventListener('click', function(){
+  show('y-out', UmbrellaMath.yearPlan(num('y-lost'),num('y-price')), function(r){ return UmbrellaMath.renderYear(r, num('y-lost')); });
+});
+</script>
+</body>
+</html>
